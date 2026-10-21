@@ -16,9 +16,6 @@ struct WelcomeView: View {
             Button("Login / Sign Up") {
                 appState.showLogin()
             }
-            Button("Continue without account") {
-                appState.showOnboarding()
-            }
         }
     }
 }

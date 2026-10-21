@@ -28,5 +28,5 @@ struct LoginView: View {
 }
 
 #Preview {
-//    LoginView()
+    LoginView(viewModel: PreviewFactory.makeLoginViewModel())
 }

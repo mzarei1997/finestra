@@ -17,7 +17,11 @@ struct AppRootView: View {
             case .splash:
                 ProgressView()
             case .onboarding:
-                Text("onboarding")
+                OnboardingView(
+                    viewModel: OnboardingViewModel(
+                        appState: appState
+                    )
+                )
             case .login:
                 LoginView(
                     viewModel: LoginViewModel(

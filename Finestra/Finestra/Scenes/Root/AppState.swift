@@ -59,4 +59,9 @@ final class AppState {
     func showOnboarding() {
         appRoute = .onboarding
     }
+    
+    func finishedOnboarding() {
+        userRepository.completedOnboarding()
+        resolveRouting()
+    }
 }
