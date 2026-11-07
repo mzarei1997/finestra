@@ -12,7 +12,7 @@ enum AppRoute {
     case onboarding
     case login
     case welcome
-    case home
+    case menu
 }
 
 /*

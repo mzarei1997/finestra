@@ -6,15 +6,18 @@
 //
 
 import Foundation
+import Observation
 
 @MainActor
 @Observable
 final class LoginViewModel {
-    private var appState: AppState
+    private let userRepo: UserRepositoryProtocol
+    private let appState: AppState
     var email: String = ""
     
     init(appState: AppState) {
         self.appState = appState
+        self.userRepo = appState.userRepository
     }
     
     func login() {
@@ -22,10 +25,21 @@ final class LoginViewModel {
             print("empty email")
             return
         }
+
         Task {
-            await appState.login(
-                model: LoginModel(email: email)
-            )
+            do {
+                let model = UserDataModel(
+                    id: AppEnvironment.accessToken,
+                    email: email,
+                    createdAt: .now,
+                    hasCompletedOnboarding: false
+                )
+                try userRepo.save(model)
+                await appState.login(model: model)
+
+            } catch {
+                print("Failed to save user: \(error)")
+            }
         }
     }
 }

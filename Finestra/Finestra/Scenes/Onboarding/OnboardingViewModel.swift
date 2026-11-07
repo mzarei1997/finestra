@@ -6,18 +6,21 @@
 //
 
 import Foundation
+import Observation
 
 @MainActor
 @Observable
 final class OnboardingViewModel {
     private let appState: AppState
+    let sports = SportModel.samples
     
     init(appState: AppState) {
         self.appState = appState
     }
     
-    func didTappedOnNext() {
-        // if it is last page being tapped
-        appState.finishedOnboarding()
+    func didTappedOnNext(isLastPage: Bool) {
+        if isLastPage {
+            appState.finishedOnboarding()
+        }
     }
 }

@@ -16,14 +16,29 @@ struct LoginView: View {
     }
     
     var body: some View {
-        VStack {
-            TextField("insert email", text: $viewModel.email)
+        VStack(alignment: .leading, spacing: 20) {
+            Spacer()
+            Image(systemName: "person.badge.key.fill")
+                .font(.system(size: 48))
+                .foregroundStyle(.tint)
+            Text("Welcome back").font(.largeTitle.bold())
+            Text("Sign in to continue your journey.")
+                .foregroundStyle(.secondary)
+            TextField("Email address", text: $viewModel.email)
+                .textContentType(.emailAddress)
+                .keyboardType(.emailAddress)
+                .textInputAutocapitalization(.never)
+                .textFieldStyle(.roundedBorder)
             Button {
                 viewModel.login()
             } label: {
-                Text("login")
+                Text("Continue")
+                    .frame(maxWidth: .infinity)
             }
+            .buttonStyle(.borderedProminent)
+            Spacer()
         }
+        .padding()
     }
 }
 

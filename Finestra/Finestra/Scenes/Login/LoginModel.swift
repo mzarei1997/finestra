@@ -8,6 +8,8 @@
 import Foundation
 
 
-struct LoginModel {
-    let email: String
-}
+//struct LoginModel {
+//    let email: String
+//}
+
+//UserDataModel will be user probably

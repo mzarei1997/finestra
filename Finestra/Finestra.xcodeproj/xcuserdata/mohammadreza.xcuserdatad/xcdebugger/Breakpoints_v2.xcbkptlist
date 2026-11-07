@@ -7,16 +7,16 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "9BA635E2-C057-42A0-B396-B3FD0B91C41F"
-            shouldBeEnabled = "Yes"
+            uuid = "F5D0759E-A0D3-496A-BA3D-ABA3004EDEFC"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "Finestra/MyApp.swift"
+            filePath = "Finestra/Scenes/Welcome/WelcomeView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "6"
-            endingLineNumber = "6"
-            landmarkName = "appState"
+            startingLineNumber = "29"
+            endingLineNumber = "29"
+            landmarkName = "body"
             landmarkType = "24">
          </BreakpointContent>
       </BreakpointProxy>

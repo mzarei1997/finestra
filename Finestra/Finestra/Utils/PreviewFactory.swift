@@ -13,15 +13,51 @@ enum PreviewFactory {
         AuthManager()
     }
     
+    private static func makeDatabaseManager() -> DatabaseManagerProtocol {
+        do {
+            return try DatabaseManager(modelTypes: [
+                UserDatabaseModel.self,
+                SessionDatabaseModel.self
+            ])
+        } catch {
+            fatalError("Unable to initialize the preview database: \(error)")
+        }
+    }
+
     private static func makeUserRepository() -> UserRepositoryProtocol {
-        UserRepository()
+        UserRepository(databaseManager: makeDatabaseManager())
     }
     
     private static func makeAppState() -> AppState {
-        AppState(authManager: makeAuthManager(), userRepository: makeUserRepository())
+        let databaseManager = makeDatabaseManager()
+        return AppState(
+            authManager: makeAuthManager(),
+            userRepository: UserRepository(databaseManager: databaseManager),
+            sessionRepository: SessionRepository(databaseManager: databaseManager)
+        )
     }
     
     static func makeLoginViewModel() -> LoginViewModel {
         LoginViewModel(appState: makeAppState())
+    }
+
+    static func makeOnboardingViewModel() -> OnboardingViewModel {
+        OnboardingViewModel(appState: makeAppState())
+    }
+
+    static func makeWelcomeViewModel() -> WelcomeViewModel {
+        WelcomeViewModel(appState: makeAppState())
+    }
+
+    static func makeHomeViewModel() -> HomeViewModel {
+        HomeViewModel(sessionRepository: makeSessionRepository())
+    }
+
+    private static func makeSessionRepository() -> SessionRepositoryProtocol {
+        SessionRepository(databaseManager: makeDatabaseManager())
+    }
+
+    static func makeMenuViewModel() -> MenuViewModel {
+        MenuViewModel(sessionRepository: makeSessionRepository())
     }
 }

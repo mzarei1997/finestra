@@ -15,7 +15,7 @@ struct AppRootView: View {
         Group {
             switch appState.appRoute {
             case .splash:
-                ProgressView()
+                SplashView(viewModel: SplashViewModel())
             case .onboarding:
                 OnboardingView(
                     viewModel: OnboardingViewModel(
@@ -28,10 +28,14 @@ struct AppRootView: View {
                         appState: appState
                     )
                 )
-            case .home:
-                Text("home")
+            case .menu:
+                MenuView(viewModel: MenuViewModel(
+                    sessionRepository: appState.sessionRepository
+                ))
             case .welcome:
-                WelcomeView()
+                WelcomeView(
+                    viewModel: WelcomeViewModel(appState: appState)
+                )
             }
         }
         .task {

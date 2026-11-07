@@ -6,10 +6,11 @@
 //
 
 import Foundation
+import Observation
 
 protocol AuthManagerProtocol {
     var isAuthenticated: Bool { get }
-    func login(model: LoginModel) async -> Bool
+    func login(model: UserDataModel) async -> Bool
     func restoreSession() async
 }
 
@@ -24,7 +25,7 @@ final class AuthManager: AuthManagerProtocol {
         isAuthenticated = false
     }
     
-    func login(model: LoginModel) async -> Bool {
+    func login(model: UserDataModel) async -> Bool {
         guard !model.email.isEmpty else { // check by server
             isAuthenticated = false
             print("cant be authenticated")
