@@ -58,82 +58,95 @@ struct HomeView: View {
     
     private var setupCard: some View {
         VStack(spacing: 0) {
-                datePicker
-                durationPicker
-                sessionTypePicker
-                priorityPicker
-                noteField
+            datePicker
+            durationPicker
+            sessionTypePicker
+            priorityPicker
+            noteField
         }
-
-        @ViewBuilder
-        private var activeSessionsPanel: some View {
-            if !viewModel.activeSessions.isEmpty {
-                VStack(alignment: .leading, spacing: 16) {
-                    Text("Active sessions")
-                        .font(.title2.bold())
-                    ForEach(viewModel.activeSessions) { session in
-                        HStack(spacing: 16) {
-                            circularTimer(for: session)
-                            VStack(alignment: .leading, spacing: 4) {
-                                Text(session.title)
-                                    .font(.headline)
-                                Text(session.timeString)
-                                    .font(.title3.monospacedDigit())
-                                    .foregroundStyle(.secondary)
+    }
+    
+    @ViewBuilder
+    private var activeSessionsPanel: some View {
+        if !viewModel.activeSessions.isEmpty {
+            VStack(alignment: .leading, spacing: 16) {
+                Text("Active sessions")
+                    .font(.title2.bold())
+                
+                ForEach(viewModel.activeSessions) { session in
+                    TimelineView(.periodic(from: .now, by: 1)) { context in
+                        VStack(spacing: 16) {
+                            HStack {
+                                VStack(alignment: .leading, spacing: 4) {
+                                    Text(session.title)
+                                        .font(.headline)
+                                    Text(session.timeString(at: context.date))
+                                        .font(.body)
+                                        .foregroundStyle(.secondary)
+                                }
+                                Spacer()
+                                Button("Stop") {
+                                    viewModel.stop(session)
+                                }
+                                .buttonStyle(.bordered)
                             }
-                            Spacer()
-                            Button("Stop") {
-                                viewModel.stop(session)
-                            }
-                            .buttonStyle(.bordered)
+                            linearTimer(for: session, at: context.date)
                         }
+                        .frame(maxWidth: .infinity)
                     }
                 }
-                .padding()
-                .background(.background, in: RoundedRectangle(cornerRadius: 24))
             }
+            .frame(maxWidth: .infinity)
+            .padding()
+            .background(.background, in: RoundedRectangle(cornerRadius: 24))
         }
-
-        @ViewBuilder
-        private var todaysSessionsPanel: some View {
-            if !viewModel.todaysSessions.isEmpty {
-                VStack(alignment: .leading, spacing: 12) {
-                    Text("Today's sessions")
-                        .font(.title2.bold())
-                    ForEach(viewModel.todaysSessions, id: \.id) { session in
-                        HStack {
-                            VStack(alignment: .leading, spacing: 4) {
-                                Text(session.type.rawValue.capitalized)
-                                    .font(.headline)
-                                Text(session.scheduledFor, format: .dateTime.hour().minute())
-                                    .font(.subheadline)
-                                    .foregroundStyle(.secondary)
-                            }
-                            Spacer()
-                            Button("Start") {
-                                viewModel.start(session)
-                            }
-                            .buttonStyle(.borderedProminent)
-                            .disabled(viewModel.activeSessions.contains { $0.id == session.id })
+    }
+    
+    @ViewBuilder
+    private var todaysSessionsPanel: some View {
+        if !viewModel.todaysSessions.isEmpty {
+            VStack(alignment: .leading, spacing: 12) {
+                Text("Today's sessions")
+                    .font(.title2.bold())
+                ForEach(viewModel.todaysSessions, id: \.id) { session in
+                    HStack {
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text(session.type.rawValue.capitalized)
+                                .font(.headline)
+                            Text(session.scheduledFor, format: .dateTime.hour().minute())
+                                .font(.subheadline)
+                                .foregroundStyle(.secondary)
                         }
+                        Spacer()
+                        Button("Start") {
+                            viewModel.start(session)
+                        }
+                        .buttonStyle(.borderedProminent)
+                        .disabled(viewModel.activeSessions.contains { $0.id == session.id })
                     }
                 }
-                .padding()
-                .background(.background, in: RoundedRectangle(cornerRadius: 24))
             }
+            .padding()
+            .background(.background, in: RoundedRectangle(cornerRadius: 24))
         }
+    }
+    
+    private func linearTimer(for session: ActiveSession, at date: Date) -> some View {
+        ZStack(alignment: .leading) {
+            GeometryReader { geometry in
+                Rectangle()
+                    .fill(.red)
 
-        private func circularTimer(for session: ActiveSession) -> some View {
-            ZStack {
-                Circle()
-                    .stroke(.indigo.opacity(0.18), lineWidth: 8)
-                Circle()
-                    .trim(from: 0, to: session.progress)
-                    .stroke(.indigo, style: StrokeStyle(lineWidth: 8, lineCap: .round))
-                    .rotationEffect(.degrees(-90))
+                Rectangle()
+                    .fill(.indigo)
+                    .frame(
+                        width: geometry.size.width * session.progress(at: date),
+                        height: geometry.size.height
+                    )
             }
-            .frame(width: 64, height: 64)
         }
+        .frame(height: 8)
+        .clipShape(Capsule())
         .padding(.horizontal)
         .background(.background, in: RoundedRectangle(cornerRadius: 24))
         .shadow(color: .black.opacity(0.06), radius: 12, y: 5)
@@ -153,7 +166,7 @@ struct HomeView: View {
             HStack {
                 Text("\(viewModel.quickStartTimer) minutes")
                     .font(.title3.weight(.semibold))
-                Stepper("", value: $viewModel.quickStartTimer, step: 5)
+                Stepper("", value: $viewModel.quickStartTimer, step: 1)
                     .labelsHidden()
             }
             Button {

@@ -7,7 +7,6 @@ import SwiftUI
 
 struct AnalyticsView: View {
     @State private var viewModel: AnalyticsViewModel
-    @State private var editingSession: SessionModel?
 
     init(viewModel: AnalyticsViewModel) {
         _viewModel = State(initialValue: viewModel)
@@ -43,12 +42,16 @@ struct AnalyticsView: View {
                                 ForEach(todaysSessions, id: \.id) { session in
                                     sessionRow(session)
                                         .contentShape(Rectangle())
-                                        .onTapGesture { editingSession = session }
                                         .swipeActions {
                                             Button(role: .destructive) {
                                                 viewModel.delete(session)
                                             } label: {
                                                 Label("Delete", systemImage: "trash")
+                                            }
+                                            Button(role: .close) {
+                                                viewModel.editingSession = session
+                                            } label: {
+                                                Label("edit", systemImage: "pencil")
                                             }
                                         }
                                 }
@@ -60,12 +63,17 @@ struct AnalyticsView: View {
                                 ForEach(upcomingSessions, id: \.id) { session in
                                     sessionRow(session)
                                         .contentShape(Rectangle())
-                                        .onTapGesture { editingSession = session }
                                         .swipeActions {
                                             Button(role: .destructive) {
                                                 viewModel.delete(session)
                                             } label: {
                                                 Label("Delete", systemImage: "trash")
+                                            }
+                                            
+                                            Button(role: .close) {
+                                                viewModel.editingSession = session
+                                            } label: {
+                                                Label("edit", systemImage: "pencil")
                                             }
                                         }
                                 }
@@ -76,7 +84,7 @@ struct AnalyticsView: View {
             }
             .navigationTitle(viewModel.model.title)
             .task { viewModel.loadSessions() }
-            .sheet(item: $editingSession) { session in
+            .sheet(item: $viewModel.editingSession) { session in
                 SessionEditorView(session: session) { updatedSession in
                     viewModel.update(updatedSession)
                 }
@@ -166,4 +174,8 @@ private struct SessionEditorView: View {
             }
         }
     }
+}
+
+#Preview {
+    AnalyticsView(viewModel: PreviewFactory.makeAnalyticsViewModel())
 }

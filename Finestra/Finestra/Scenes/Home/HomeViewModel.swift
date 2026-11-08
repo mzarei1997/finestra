@@ -19,7 +19,7 @@ final class HomeViewModel {
     var dates: Set<DateComponents> = []
     var priority: SessionPriority = .medium
     var sessionType: SessionType = .study
-    var quickStartTimer: Int = 15
+    var quickStartTimer: Int = 5
     var noteText: String = ""
     private(set) var quickStartRemainingSeconds: Int = 0
     private(set) var quickStartEndDate: Date?
@@ -173,16 +173,20 @@ struct ActiveSession: Identifiable {
     let endDate: Date
     let durationSeconds: Int
 
-    var remainingSeconds: Int {
-        max(0, Int(ceil(endDate.timeIntervalSinceNow)))
+    func remainingSeconds(at date: Date) -> Int {
+        max(0, Int(ceil(endDate.timeIntervalSince(date))))
     }
 
-    var progress: Double {
+    func progress(at date: Date) -> Double {
         guard durationSeconds > 0 else { return 0 }
-        return min(max(Double(remainingSeconds) / Double(durationSeconds), 0), 1)
+        return min(
+            max(Double(remainingSeconds(at: date)) / Double(durationSeconds), 0),
+            1
+        )
     }
 
-    var timeString: String {
-        String(format: "%02d:%02d", remainingSeconds / 60, remainingSeconds % 60)
+    func timeString(at date: Date) -> String {
+        let remaining = remainingSeconds(at: date)
+        return String(format: "%02d:%02d", remaining / 60, remaining % 60)
     }
 }

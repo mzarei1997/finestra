@@ -13,6 +13,7 @@ final class AnalyticsViewModel {
     private let sessionRepository: SessionRepositoryProtocol
     private(set) var sessions: [SessionModel] = []
     private(set) var errorMessage: String?
+    var editingSession: SessionModel?
 
     init(sessionRepository: SessionRepositoryProtocol) {
         self.sessionRepository = sessionRepository

@@ -60,4 +60,8 @@ enum PreviewFactory {
     static func makeMenuViewModel() -> MenuViewModel {
         MenuViewModel(sessionRepository: makeSessionRepository())
     }
+    
+    static func makeAnalyticsViewModel() -> AnalyticsViewModel {
+        AnalyticsViewModel(sessionRepository: makeSessionRepository())
+    }
 }
