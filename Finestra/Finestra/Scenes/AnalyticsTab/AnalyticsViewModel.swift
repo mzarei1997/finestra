@@ -93,4 +93,38 @@ final class AnalyticsViewModel {
             $0.scheduledFor < Calendar.current.startOfDay(for: .now)
         }
     }
+    
+    var weeklySessionCounts: [WeeklySessionCount] {
+        let calendar = Calendar.current
+        let today = calendar.startOfDay(for: .now)
+        let weekday = calendar.component(.weekday, from: today)
+        let daysFromStartOfWeek = (weekday - calendar.firstWeekday + 7) % 7
+        let startOfWeek = calendar.date(
+            byAdding: .day,
+            value: -daysFromStartOfWeek,
+            to: today
+        ) ?? today
+
+        return (0..<7).compactMap { offset in
+            guard let date = calendar.date(
+                byAdding: .day,
+                value: offset,
+                to: startOfWeek
+            ) else {
+                return nil
+            }
+            return WeeklySessionCount(
+                date: date,
+                count: sessions.filter {
+                    calendar.isDate($0.scheduledFor, inSameDayAs: date)
+                }.count
+            )
+        }
+    }
+
+    struct WeeklySessionCount: Identifiable {
+        let date: Date
+        let count: Int
+        var id: Date { date }
+    }
 }

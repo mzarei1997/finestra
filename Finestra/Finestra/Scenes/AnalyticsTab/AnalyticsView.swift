@@ -4,6 +4,7 @@
 //
 
 import SwiftUI
+import Charts
 
 struct AnalyticsView: View {
     @State private var viewModel: AnalyticsViewModel
@@ -21,42 +22,26 @@ struct AnalyticsView: View {
                         systemImage: "exclamationmark.triangle",
                         description: Text(errorMessage)
                     )
-                } else if viewModel.sessions.isEmpty {
-                    ContentUnavailableView(
-                        "No sessions yet",
-                        systemImage: "calendar",
-                        description: Text("Schedule a session from Home to see it here.")
-                    )
                 } else {
-                    List {
-                        Section("Today") {
-                            ForEach(viewModel.orderedTodaySessions, id: \.id) { session in
-                                sessionRow(session)
-                                    .swipeActions {
-                                        rowActions(for: session)
-                                    }
-                            }
-                            .onMove(perform: viewModel.moveTodaySessions)
+                    VStack(alignment: .leading, spacing: 16) {
+                        Text("This week")
+                            .font(.title2.bold())
+                        Chart(viewModel.weeklySessionCounts) { day in
+                            BarMark(
+                                x: .value("Day", day.date, unit: .day),
+                                y: .value("Sessions", day.count)
+                            )
+                            .foregroundStyle(.indigo)
                         }
-
-                        Section("Upcoming") {
-                            ForEach(viewModel.upcomingSessions, id: \.id) { session in
-                                sessionRow(session)
-                                    .swipeActions {
-                                        rowActions(for: session)
-                                    }
-                            }
-                        }
-
-                        Section("History") {
-                            ForEach(viewModel.historySessions, id: \.id) { session in
-                                sessionRow(session)
-                                    .swipeActions {
-                                        rowActions(for: session)
-                                    }
+                        .frame(height: 220)
+                        .chartYAxis {
+                            AxisMarks(values: .automatic) { value in
+                                AxisGridLine()
+                                AxisValueLabel()
                             }
                         }
                     }
+                    .padding()
                 }
             }
             .navigationTitle(viewModel.model.title)
@@ -96,7 +81,7 @@ struct AnalyticsView: View {
                 Menu {
                     ForEach(SessionStatus.allCases, id: \.self) { status in
                         Button {
-                            viewModel.update(session) //MARK: status is missed
+                            viewModel.updateStatus(status, for: session)
                         } label: {
                             Label(status.rawValue, systemImage: status == session.status ? "checkmark" : "")
                         }
