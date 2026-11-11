@@ -58,6 +58,8 @@ final class HomeViewModel {
                     duration: duration,
                     type: sessionType,
                     scheduledFor: date,
+                    startTime: Date.now,
+                    reminder: 10,
                     priority: priority
                 )
                 try sessionRepository.save(session)

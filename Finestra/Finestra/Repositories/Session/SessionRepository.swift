@@ -28,6 +28,8 @@ final class SessionRepository: SessionRepositoryProtocol {
             duration: session.duration,
             type: session.type.rawValue,
             scheduledFor: session.scheduledFor,
+            startTime: session.startTime,
+            reminder: session.reminder,
             priority: session.priority.rawValue
         )
         try databaseManager.add(databaseModel)
@@ -67,8 +69,10 @@ final class SessionRepository: SessionRepositoryProtocol {
             id: session.id,
             note: session.note,
             duration: session.duration,
-            type: SessionType(rawValue: session.type) ?? .custom,
+            type: SessionType(rawValue: session.type) ?? .exercise,
             scheduledFor: session.scheduledFor,
+            startTime: session.startTime,
+            reminder: session.reminder,
             priority: SessionPriority(rawValue: session.priority) ?? .medium
         )
     }

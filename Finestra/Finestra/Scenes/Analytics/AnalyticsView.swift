@@ -166,6 +166,8 @@ private struct SessionEditorView: View {
                             duration: duration,
                             type: type,
                             scheduledFor: scheduledFor,
+                            startTime: Date.now,
+                            reminder: 20,
                             priority: priority
                         ))
                         dismiss()

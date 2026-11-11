@@ -13,14 +13,18 @@ final class SessionDatabaseModel {
     var duration: Int
     var type: String
     var scheduledFor: Date
+    var startTime: Date
+    var reminder: Int
     var priority: String
-
+    
     init(
         id: String,
         note: String,
         duration: Int,
         type: String,
         scheduledFor: Date,
+        startTime: Date,
+        reminder: Int,
         priority: String
     ) {
         self.id = id
@@ -28,6 +32,8 @@ final class SessionDatabaseModel {
         self.duration = duration
         self.type = type
         self.scheduledFor = scheduledFor
+        self.reminder = reminder
+        self.startTime = startTime
         self.priority = priority
     }
 }
@@ -38,14 +44,18 @@ struct SessionModel: Identifiable {
     let duration: Int
     let type: SessionType
     let scheduledFor: Date
+    let startTime: Date
+    let reminder: Int
     let priority: SessionPriority
-
+    
     init(
         id: String = UUID().uuidString,
         note: String,
         duration: Int,
         type: SessionType,
         scheduledFor: Date,
+        startTime: Date,
+        reminder: Int,
         priority: SessionPriority
     ) {
         self.id = id
@@ -53,6 +63,8 @@ struct SessionModel: Identifiable {
         self.duration = duration
         self.type = type
         self.scheduledFor = scheduledFor
+        self.startTime = startTime
+        self.reminder = reminder
         self.priority = priority
     }
 }
