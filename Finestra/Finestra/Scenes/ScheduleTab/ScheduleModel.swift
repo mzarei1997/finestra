@@ -8,38 +8,6 @@
 import Foundation
 import SwiftUI
 
-struct FocusModel {
-    var id: String?
-    var note: String?
-    var duration: Int?
-    var type: SessionType?
-    var date: [Date]?
-    var startTime: Date?
-    var reminder: Int?
-    var priority: SessionPriority?
-    
-    var formattedDates: [Date] {
-        guard let date else { return [] }
-        return date.sorted()
-    }
-    
-    var isFormComplete: Bool {
-        type != nil &&
-        startTime != nil &&
-        date != nil &&
-        priority != nil &&
-        !formattedDates.isEmpty
-    }
-}
-
-enum SessionStatus: String, CaseIterable {
-    case scheduled
-    case postponed
-    case inProgress
-    case cancelled
-    case completed
-}
-
 enum SessionPriority: String, CaseIterable {
     case high
     case low

@@ -13,9 +13,10 @@ final class SessionDatabaseModel {
     var duration: Int
     var type: String
     var scheduledFor: Date
-    var startTime: Date
-    var reminder: Int
+    var startTime: Date?
+    var reminder: Int = 10
     var priority: String
+    var status: SessionStatus = SessionStatus.scheduled
     
     init(
         id: String,
@@ -25,7 +26,8 @@ final class SessionDatabaseModel {
         scheduledFor: Date,
         startTime: Date,
         reminder: Int,
-        priority: String
+        priority: String,
+        status: SessionStatus
     ) {
         self.id = id
         self.note = note
@@ -35,6 +37,7 @@ final class SessionDatabaseModel {
         self.reminder = reminder
         self.startTime = startTime
         self.priority = priority
+        self.status = status
     }
 }
 
@@ -47,6 +50,7 @@ struct SessionModel: Identifiable {
     let startTime: Date
     let reminder: Int
     let priority: SessionPriority
+    let status: SessionStatus
     
     init(
         id: String = UUID().uuidString,
@@ -56,7 +60,8 @@ struct SessionModel: Identifiable {
         scheduledFor: Date,
         startTime: Date,
         reminder: Int,
-        priority: SessionPriority
+        priority: SessionPriority,
+        status: SessionStatus
     ) {
         self.id = id
         self.note = note
@@ -66,5 +71,29 @@ struct SessionModel: Identifiable {
         self.startTime = startTime
         self.reminder = reminder
         self.priority = priority
+        self.status = status
+    }
+}
+
+enum SessionStatus: String, CaseIterable, Codable {
+    case scheduled
+    case postponed
+    case inProgress
+    case cancelled
+    case completed
+    
+    var color: Color {
+        switch self {
+        case .scheduled:
+                .gray
+        case .postponed:
+                .orange
+        case .inProgress:
+                .green
+        case .cancelled:
+                .red
+        case .completed:
+                .blue
+        }
     }
 }

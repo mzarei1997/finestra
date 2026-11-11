@@ -30,7 +30,8 @@ final class SessionRepository: SessionRepositoryProtocol {
             scheduledFor: session.scheduledFor,
             startTime: session.startTime,
             reminder: session.reminder,
-            priority: session.priority.rawValue
+            priority: session.priority.rawValue,
+            status: session.status
         )
         try databaseManager.add(databaseModel)
     }
@@ -52,7 +53,10 @@ final class SessionRepository: SessionRepositoryProtocol {
             databaseModel.duration = session.duration
             databaseModel.type = session.type.rawValue
             databaseModel.scheduledFor = session.scheduledFor
+            databaseModel.startTime = session.startTime
+            databaseModel.reminder = session.reminder
             databaseModel.priority = session.priority.rawValue
+            databaseModel.status = session.status
         }
     }
 
@@ -71,9 +75,10 @@ final class SessionRepository: SessionRepositoryProtocol {
             duration: session.duration,
             type: SessionType(rawValue: session.type) ?? .exercise,
             scheduledFor: session.scheduledFor,
-            startTime: session.startTime,
+            startTime: session.startTime ?? Date.now,
             reminder: session.reminder,
-            priority: SessionPriority(rawValue: session.priority) ?? .medium
+            priority: SessionPriority(rawValue: session.priority) ?? .medium,
+            status: session.status
         )
     }
 }

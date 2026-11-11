@@ -39,7 +39,11 @@ final class DatabaseManager: DatabaseManagerProtocol {
         configurations: [ModelConfiguration] = []
     ) throws {
         let schema = Schema(modelTypes)
-        let container = try ModelContainer(for: schema, configurations: configurations)
+        let container = try ModelContainer(
+            for: schema,
+            migrationPlan: MigrationPlan.self,
+            configurations: configurations
+        )
         modelContext = ModelContext(container)
     }
 

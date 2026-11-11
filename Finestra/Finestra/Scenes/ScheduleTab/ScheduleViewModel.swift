@@ -10,7 +10,7 @@ import Observation
 
 @MainActor
 @Observable
-final class HomeViewModel {
+final class ScheduleViewModel {
     private let sessionRepository: SessionRepositoryProtocol
     private(set) var sessions: [SessionModel] = []
     private(set) var activeSessions: [ActiveSession] = []
@@ -21,6 +21,8 @@ final class HomeViewModel {
     var sessionType: SessionType = .study
     var quickStartTimer: Int = 5
     var noteText: String = ""
+    var startTime: Date = .now
+    var reminder: Int = 10
     private(set) var quickStartRemainingSeconds: Int = 0
     private(set) var quickStartEndDate: Date?
     var duration: Int = 20
@@ -58,15 +60,18 @@ final class HomeViewModel {
                     duration: duration,
                     type: sessionType,
                     scheduledFor: date,
-                    startTime: Date.now,
-                    reminder: 10,
-                    priority: priority
+                    startTime: startTime,
+                    reminder: reminder,
+                    priority: priority,
+                    status: .scheduled
                 )
                 try sessionRepository.save(session)
             }
             loadSessions()
             dates.removeAll()
             noteText = ""
+            startTime = .now
+            reminder = 10
         } catch {
             errorMessage = error.localizedDescription
         }

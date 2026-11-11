@@ -9,14 +9,39 @@ struct MenuView: View {
 
     var body: some View {
         TabView {
-            HomeView(viewModel: HomeViewModel(sessionRepository: viewModel.sessionRepository))
-                .tabItem { Label("Home", systemImage: "house.fill") }
+            ScheduleView(
+                viewModel: ScheduleViewModel(
+                    sessionRepository: viewModel.sessionRepository
+                )
+            )
+            .tabItem {
+                Label(
+                    "Schedule",
+                    systemImage: "calendar"
+                )
+            }
+            FocusView(
+                viewModel: FocusViewModel(
+                    sessionRepository: viewModel.sessionRepository
+                )
+            )
+            .tabItem {
+                Label(
+                    "Focus",
+                    systemImage: "stopwatch"
+                )
+            }
             AnalyticsView(
                 viewModel: AnalyticsViewModel(
                     sessionRepository: viewModel.sessionRepository
                 )
             )
-            .tabItem { Label("Analytics", systemImage: "chart.bar.fill") }
+            .tabItem {
+                Label(
+                    "Insights",
+                    systemImage: "chart.bar.fill"
+                )
+            }
         }
     }
 }

@@ -8,8 +8,8 @@ import SwiftUI
         do {
             databaseManager = try DatabaseManager(
                 modelTypes: [
-                    UserDatabaseModel.self,
-                    SessionDatabaseModel.self
+                    SessionDatabaseModel.self,
+                    UserDatabaseModel.self
                 ]
             )
         } catch {

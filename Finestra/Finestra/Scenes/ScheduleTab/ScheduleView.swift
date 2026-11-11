@@ -1,5 +1,5 @@
 //
-//  HomeView.swift
+//  FocusView.swift
 //  Finestra
 //
 //  Created by Mohammadreza on 11/4/26.
@@ -7,9 +7,9 @@
 
 import SwiftUI
 
-struct HomeView: View {
-    @State private var viewModel: HomeViewModel
-    init(viewModel: HomeViewModel) {
+struct ScheduleView: View {
+    @State private var viewModel: ScheduleViewModel
+    init(viewModel: ScheduleViewModel) {
         _viewModel = .init(initialValue: viewModel)
     }
     
@@ -59,6 +59,8 @@ struct HomeView: View {
     private var setupCard: some View {
         VStack(spacing: 0) {
             datePicker
+            startTimePicker
+            reminderPicker
             durationPicker
             sessionTypePicker
             priorityPicker
@@ -245,6 +247,30 @@ struct HomeView: View {
             viewModel.isDurationPickerPresented = true
         }
     }
+
+    private var startTimePicker: some View {
+        DatePicker(
+            "Start at",
+            selection: $viewModel.startTime,
+            displayedComponents: .hourAndMinute
+        )
+        .padding(.vertical, 8)
+    }
+
+    private var reminderPicker: some View {
+        HStack {
+            Text("Reminder")
+            Spacer()
+            Picker("Reminder", selection: $viewModel.reminder) {
+                ForEach(Array(stride(from: 0, through: 60, by: 5)), id: \.self) { minutes in
+                    Text(minutes == 0 ? "None" : "\(minutes) min before")
+                        .tag(minutes)
+                }
+            }
+            .tint(.secondary)
+        }
+        .padding(.vertical, 8)
+    }
     
     private var datePicker: some View {
         settingRow(
@@ -317,5 +343,5 @@ struct HomeView: View {
 }
 
 #Preview {
-    HomeView(viewModel: PreviewFactory.makeHomeViewModel())
+    ScheduleView(viewModel: PreviewFactory.makeScheduleViewModel())
 }

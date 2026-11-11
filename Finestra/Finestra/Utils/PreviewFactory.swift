@@ -49,8 +49,8 @@ enum PreviewFactory {
         WelcomeViewModel(appState: makeAppState())
     }
 
-    static func makeHomeViewModel() -> HomeViewModel {
-        HomeViewModel(sessionRepository: makeSessionRepository())
+    static func makeScheduleViewModel() -> ScheduleViewModel {
+        ScheduleViewModel(sessionRepository: makeSessionRepository())
     }
 
     private static func makeSessionRepository() -> SessionRepositoryProtocol {
@@ -63,5 +63,9 @@ enum PreviewFactory {
     
     static func makeAnalyticsViewModel() -> AnalyticsViewModel {
         AnalyticsViewModel(sessionRepository: makeSessionRepository())
+    }
+    
+    static func makeFocusViewModel() -> FocusViewModel {
+        FocusViewModel(sessionRepository: makeSessionRepository())
     }
 }
