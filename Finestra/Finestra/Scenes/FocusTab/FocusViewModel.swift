@@ -100,11 +100,15 @@ final class FocusViewModel {
             durationSeconds: durationSeconds,
             remainingDuration: durationSeconds
         ))
+        updateStatus(.inProgress, for: session)
         startActiveSessionsTimer()
     }
 
     func stop(_ activeSession: ActiveSession) {
         activeSessions.removeAll { $0.id == activeSession.id }
+        if let session = sessions.first(where: { $0.id == activeSession.id }) {
+            updateStatus(.scheduled, for: session)
+        }
         stopActiveSessionsTimerIfNeeded()
     }
 
@@ -139,13 +143,35 @@ final class FocusViewModel {
     }
 
     private func updateActiveSessions() {
-        activeSessions = activeSessions.compactMap { activeSession in
-            guard !activeSession.isPaused else { return activeSession }
-            guard activeSession.endDate > .now else { return nil }
-            return activeSession
+        let completedIDs = activeSessions.compactMap { activeSession -> String? in
+            guard !activeSession.isPaused, activeSession.endDate <= .now else {
+                return nil
+            }
+            return activeSession.id
+        }
+
+        activeSessions = activeSessions.filter { activeSession in
+            activeSession.isPaused || activeSession.endDate > .now
+        }
+        completedIDs.forEach { id in
+            guard let session = sessions.first(where: { $0.id == id }) else { return }
+            updateStatus(.finished, for: session)
         }
 
         stopActiveSessionsTimerIfNeeded()
+    }
+
+    private func updateStatus(_ status: SessionStatus, for session: SessionModel) {
+        guard session.status != status else { return }
+        let updatedSession = session.withStatus(status)
+        do {
+            try sessionRepository.update(updatedSession)
+            if let index = sessions.firstIndex(where: { $0.id == session.id }) {
+                sessions[index] = updatedSession
+            }
+        } catch {
+            errorMessage = error.localizedDescription
+        }
     }
 
     private func stopActiveSessionsTimerIfNeeded() {
@@ -171,6 +197,22 @@ final class FocusViewModel {
 
     isolated deinit {
         activeSessionsTimer?.invalidate()
+    }
+}
+
+private extension SessionModel {
+    func withStatus(_ status: SessionStatus) -> SessionModel {
+        SessionModel(
+            id: id,
+            note: note,
+            duration: duration,
+            type: type,
+            scheduledFor: scheduledFor,
+            startTime: startTime,
+            reminder: reminder,
+            priority: priority,
+            status: status
+        )
     }
 }
 

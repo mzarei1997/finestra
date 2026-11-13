@@ -79,7 +79,8 @@ enum SessionStatus: String, CaseIterable, Codable {
     case scheduled
     case postponed
     case inProgress
-    case cancelled
+    case missed
+    case finished
     case completed
     
     var color: Color {
@@ -90,8 +91,10 @@ enum SessionStatus: String, CaseIterable, Codable {
                 .orange
         case .inProgress:
                 .green
-        case .cancelled:
+        case .missed:
                 .red
+        case .finished:
+                .blue
         case .completed:
                 .blue
         }

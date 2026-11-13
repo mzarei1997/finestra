@@ -148,9 +148,15 @@ struct FocusView: View {
             VStack(alignment: .leading, spacing: 4) {
                 Text(session.type.rawValue.capitalized)
                     .font(.headline)
-                Text(session.startTime, format: .dateTime.hour().minute())
-                    .font(.subheadline)
-                    .foregroundStyle(.secondary)
+                HStack {
+                    Text(session.startTime, format: .dateTime.hour().minute())
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                    Text(session.scheduledFor, format: .dateTime)
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                }
+                
                 Text(session.status.rawValue.capitalized)
                     .font(.caption)
                     .foregroundStyle(session.status.color)
