@@ -17,44 +17,24 @@ final class FocusViewModel {
     private(set) var activeSessions: [ActiveSession] = []
     private var activeSessionsTimer: Timer?
 
-    var todaysSessions: [SessionModel] {
-        sessions.filter {
-            Calendar.current.isDateInToday($0.scheduledFor) &&
-            !nearbySessionIDs.contains($0.id) &&
-            !activeSessionIDs.contains($0.id)
-        }
-    }
-
-    var upcomingSessions: [SessionModel] {
-        sessions.filter {
-            !Calendar.current.isDateInToday($0.scheduledFor) &&
-            !nearbySessionIDs.contains($0.id) &&
-            !activeSessionIDs.contains($0.id) &&
-            sessionStartDate(for: $0) >= Calendar.current.startOfDay(for: .now)
-        }
-    }
-
-    var historySessions: [SessionModel] {
-        sessions.filter {
-            !Calendar.current.isDateInToday($0.scheduledFor) &&
-            sessionStartDate(for: $0) < Calendar.current.startOfDay(for: .now)
-        }
-    }
-
-    var nearbySessions: [SessionModel] {
-        sessions
-            .filter { session in
-                guard session.reminder > 0 else { return false }
-                guard session.status == .scheduled || session.status == .postponed else {
-                    return false
-                }
-                guard !activeSessionIDs.contains(session.id) else { return false }
-                let remainingTime = sessionStartDate(for: session).timeIntervalSinceNow
-                return remainingTime >= 0 &&
-                    remainingTime <= TimeInterval(session.reminder * 60)
-            }
-            .sorted { sessionStartDate(for: $0) < sessionStartDate(for: $1) }
-    }
+    var todaysSessions: [SessionModel] = []
+    var upcomingSessions: [SessionModel] = []
+    var historySessions: [SessionModel] = []
+    var nearbySessions: [SessionModel] = []
+//    {
+//        sessions
+//            .filter { session in
+//                guard session.reminder > 0 else { return false }
+//                guard session.status == .scheduled || session.status == .postponed else {
+//                    return false
+//                }
+//                guard !activeSessionIDs.contains(session.id) else { return false }
+//                let remainingTime = sessionStartDate(for: session).timeIntervalSinceNow
+//                return remainingTime >= 0 &&
+//                    remainingTime <= TimeInterval(session.reminder * 60)
+//            }
+//            .sorted { sessionStartDate(for: $0) < sessionStartDate(for: $1) }
+//    }
 
     private var activeSessionIDs: Set<String> {
         Set(activeSessions.map(\.id))
@@ -84,9 +64,35 @@ final class FocusViewModel {
     func loadSessions() {
         do {
             sessions = try sessionRepository.loadAll()
+            classifySessions()
             errorMessage = nil
         } catch {
             errorMessage = error.localizedDescription
+        }
+    }
+    
+    private func classifySessions() {
+        for session in self.sessions {
+            let a = "A"
+            let isToday = Calendar.current.isDate(session.scheduledFor, inSameDayAs: Date.now)
+            if isToday {
+                let isWithinReminder = abs(session.scheduledFor.timeIntervalSince(Date.now)) <= Double(session.reminder)
+                if isWithinReminder {
+                    // nearby
+                    upcomingSessions.append(session)
+                } else {
+                    // today
+                    todaysSessions.append(session)
+                }
+            } else {
+                if session.scheduledFor < Date.now {
+                    // history
+                    historySessions.append(session)
+                } else {
+                    upcomingSessions.append(session)
+                    // upcoming except than today
+                }
+            }
         }
     }
 
