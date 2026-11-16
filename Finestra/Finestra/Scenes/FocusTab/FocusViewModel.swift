@@ -60,29 +60,58 @@ final class FocusViewModel {
     init(sessionRepository: SessionRepositoryProtocol) {
         self.sessionRepository = sessionRepository
     }
+    
+    func dropSession(session: SessionModel) {
+        do {
+            try sessionRepository.delete(session)
+            try provideSessions()
+        } catch {
+            errorMessage = "item cannot be deleted"
+        }
+    }
 
     func loadSessions() {
         do {
-            sessions = try sessionRepository.loadAll()
-            classifySessions()
-            errorMessage = nil
+            try provideSessions()
         } catch {
             errorMessage = error.localizedDescription
         }
     }
     
+    private func provideSessions() throws {
+        sessions = try sessionRepository.loadAll()
+        classifySessions()
+        errorMessage = nil
+    }
+    
+    private func currentLocalDate() -> Date {
+        let now = Date.now
+        let offset = TimeZone.current.secondsFromGMT(for: now)
+        return now.addingTimeInterval(TimeInterval(offset))
+    }
+    
     private func classifySessions() {
+        todaysSessions = []
+        upcomingSessions = []
+        historySessions = []
+        nearbySessions = []
         for session in self.sessions {
-            let a = "A"
-            let isToday = Calendar.current.isDate(session.scheduledFor, inSameDayAs: Date.now)
+            
+            let localDate = currentLocalDate()
+            let isToday = Calendar.current.isDate(session.scheduledFor, inSameDayAs: localDate)
             if isToday {
-                let isWithinReminder = abs(session.scheduledFor.timeIntervalSince(Date.now)) <= Double(session.reminder)
-                if isWithinReminder {
-                    // nearby
-                    upcomingSessions.append(session)
+                if localDate >= session.scheduledFor {
+                    // history
+                    historySessions.append(session)
                 } else {
-                    // today
-                    todaysSessions.append(session)
+                    let isWithinReminder = session.scheduledFor.timeIntervalSince(localDate)/3600 <= Double(session.reminder)
+                    if isWithinReminder {
+                        // nearby
+                        nearbySessions.append(session)
+                    } else {
+                        // today
+                        todaysSessions.append(session)
+                    }
                 }
             } else {
                 if session.scheduledFor < Date.now {
@@ -188,15 +217,14 @@ final class FocusViewModel {
 
     private func sessionStartDate(for session: SessionModel) -> Date {
         let calendar = Calendar.current
-        let day = calendar.dateComponents([.year, .month, .day], from: session.scheduledFor)
-        let time = calendar.dateComponents([.hour, .minute], from: session.startTime)
+        let dateComponents = calendar.dateComponents([.year, .month, .day, .hour, .minute], from: session.scheduledFor)
         return calendar.date(
             from: DateComponents(
-                year: day.year,
-                month: day.month,
-                day: day.day,
-                hour: time.hour,
-                minute: time.minute
+                year: dateComponents.year,
+                month: dateComponents.month,
+                day: dateComponents.day,
+                hour: dateComponents.hour,
+                minute: dateComponents.minute
             )
         ) ?? session.scheduledFor
     }
@@ -214,7 +242,6 @@ private extension SessionModel {
             duration: duration,
             type: type,
             scheduledFor: scheduledFor,
-            startTime: startTime,
             reminder: reminder,
             priority: priority,
             status: status

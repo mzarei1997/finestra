@@ -59,7 +59,6 @@ final class AnalyticsViewModel {
             duration: session.duration,
             type: session.type,
             scheduledFor: session.scheduledFor,
-            startTime: session.startTime,
             reminder: session.reminder,
             priority: session.priority,
             status: status

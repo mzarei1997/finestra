@@ -34,11 +34,6 @@ struct SessionEditorView: View {
                     "Scheduled for",
                     selection: $viewModel.scheduledFor
                 )
-                DatePicker(
-                    "Start at",
-                    selection: $viewModel.startTime,
-                    displayedComponents: .hourAndMinute
-                )
                 Picker("Reminder", selection: $viewModel.reminder) {
                     ForEach(Array(stride(from: 0, through: 60, by: 5)), id: \.self) { minutes in
                         Text(minutes == 0 ? "None" : "\(minutes) min before")

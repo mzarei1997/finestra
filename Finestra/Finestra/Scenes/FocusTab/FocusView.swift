@@ -149,10 +149,13 @@ struct FocusView: View {
                 Text(session.type.rawValue.capitalized)
                     .font(.headline)
                 HStack {
-                    Text(session.startTime, format: .dateTime.hour().minute())
-                        .font(.subheadline)
-                        .foregroundStyle(.secondary)
-                    Text(session.scheduledFor, format: .dateTime)
+                    Text(session.scheduledFor.formatted(
+                        Date.ISO8601FormatStyle()
+                            .year()
+                            .month()
+                            .day()
+                            .time(includingFractionalSeconds: false))
+                    )
                         .font(.subheadline)
                         .foregroundStyle(.secondary)
                 }
@@ -169,9 +172,11 @@ struct FocusView: View {
                 .buttonStyle(.borderedProminent)
                 .disabled(viewModel.activeSessions.contains { $0.id == session.id })
             }
+            Button("", systemImage: "xmark") {
+                viewModel.dropSession(session: session)
+            }
         }
     }
-
 
     private func linearTimer(for session: ActiveSession, at date: Date) -> some View {
         ZStack(alignment: .leading) {

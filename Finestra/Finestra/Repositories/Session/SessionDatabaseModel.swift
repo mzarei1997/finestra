@@ -13,7 +13,6 @@ final class SessionDatabaseModel {
     var duration: Int
     var type: String
     var scheduledFor: Date
-    var startTime: Date?
     var reminder: Int = 10
     var priority: String
     var status: SessionStatus = SessionStatus.scheduled
@@ -24,7 +23,6 @@ final class SessionDatabaseModel {
         duration: Int,
         type: String,
         scheduledFor: Date,
-        startTime: Date,
         reminder: Int,
         priority: String,
         status: SessionStatus
@@ -35,7 +33,6 @@ final class SessionDatabaseModel {
         self.type = type
         self.scheduledFor = scheduledFor
         self.reminder = reminder
-        self.startTime = startTime
         self.priority = priority
         self.status = status
     }
@@ -47,7 +44,6 @@ struct SessionModel: Identifiable {
     let duration: Int
     let type: SessionType
     let scheduledFor: Date
-    let startTime: Date
     let reminder: Int
     let priority: SessionPriority
     let status: SessionStatus
@@ -58,7 +54,6 @@ struct SessionModel: Identifiable {
         duration: Int,
         type: SessionType,
         scheduledFor: Date,
-        startTime: Date,
         reminder: Int,
         priority: SessionPriority,
         status: SessionStatus
@@ -68,7 +63,6 @@ struct SessionModel: Identifiable {
         self.duration = duration
         self.type = type
         self.scheduledFor = scheduledFor
-        self.startTime = startTime
         self.reminder = reminder
         self.priority = priority
         self.status = status

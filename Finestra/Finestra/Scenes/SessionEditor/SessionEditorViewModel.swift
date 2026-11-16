@@ -16,7 +16,6 @@ final class SessionEditorViewModel {
     var duration: Int
     var type: SessionType
     var scheduledFor: Date
-    var startTime: Date
     var reminder: Int
     var priority: SessionPriority
     var status: SessionStatus
@@ -31,7 +30,6 @@ final class SessionEditorViewModel {
         duration = session.duration
         type = session.type
         scheduledFor = session.scheduledFor
-        startTime = session.startTime
         reminder = session.reminder
         priority = session.priority
         status = session.status
@@ -44,7 +42,6 @@ final class SessionEditorViewModel {
             duration: duration,
             type: type,
             scheduledFor: scheduledFor,
-            startTime: startTime,
             reminder: reminder,
             priority: priority,
             status: status

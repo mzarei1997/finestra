@@ -65,9 +65,6 @@ struct AnalyticsView: View {
                 Text(session.scheduledFor, format: .dateTime.month().day().year())
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
-                Text("Starts \(session.startTime, format: .dateTime.hour().minute())")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
                 if !session.note.isEmpty {
                     Text(session.note)
                         .font(.caption)

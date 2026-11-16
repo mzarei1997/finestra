@@ -24,9 +24,27 @@ final class ScheduleViewModel {
     var isDurationPickerPresented: Bool = false
     var isDatePickerPresented: Bool = false
     var formattedDates: [Date] {
-        dates
-             .compactMap { Calendar.current.date(from: $0) }
-             .sorted()
+        var calendar = Calendar.current
+        calendar.timeZone = .current
+        let components = calendar.dateComponents(
+            [.hour, .minute],
+            from: startTime
+        )
+        return dates
+            .compactMap {
+                Calendar(identifier: .gregorian).date(
+                    from: DateComponents(
+                        timeZone: TimeZone(secondsFromGMT: 0),
+                        year: $0.year,
+                        month: $0.month,
+                        day: $0.day,
+                        hour: components.hour,
+                        minute: components.minute
+                        
+                    )
+                )
+            }
+            .sorted()
     }
     
     init(sessionRepository: SessionRepositoryProtocol) {
@@ -43,7 +61,6 @@ final class ScheduleViewModel {
                     duration: duration,
                     type: sessionType,
                     scheduledFor: date,
-                    startTime: startTime,
                     reminder: reminder,
                     priority: priority,
                     status: .scheduled
