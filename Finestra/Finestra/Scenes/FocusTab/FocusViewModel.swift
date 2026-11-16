@@ -14,28 +14,13 @@ final class FocusViewModel {
     private let sessionRepository: SessionRepositoryProtocol
     private(set) var sessions: [SessionModel] = []
     private(set) var errorMessage: String?
-    private(set) var activeSessions: [ActiveSession] = []
     private var activeSessionsTimer: Timer?
 
-    var todaysSessions: [SessionModel] = []
-    var upcomingSessions: [SessionModel] = []
-    var historySessions: [SessionModel] = []
-    var nearbySessions: [SessionModel] = []
-//    {
-//        sessions
-//            .filter { session in
-//                guard session.reminder > 0 else { return false }
-//                guard session.status == .scheduled || session.status == .postponed else {
-//                    return false
-//                }
-//                guard !activeSessionIDs.contains(session.id) else { return false }
-//                let remainingTime = sessionStartDate(for: session).timeIntervalSinceNow
-//                return remainingTime >= 0 &&
-//                    remainingTime <= TimeInterval(session.reminder * 60)
-//            }
-//            .sorted { sessionStartDate(for: $0) < sessionStartDate(for: $1) }
-//    }
-
+    private(set) var activeSessions: [ActiveSession] = []
+    private(set) var todaysSessions: [SessionModel] = []
+    private(set) var upcomingSessions: [SessionModel] = []
+    private(set) var historySessions: [SessionModel] = []
+    private(set) var nearbySessions: [SessionModel] = []
     private var activeSessionIDs: Set<String> {
         Set(activeSessions.map(\.id))
     }
@@ -185,9 +170,9 @@ final class FocusViewModel {
             return activeSession.id
         }
 
-        activeSessions = activeSessions.filter { activeSession in
-            activeSession.isPaused || activeSession.endDate > .now
-        }
+//        activeSessions = activeSessions.filter { activeSession in
+//            activeSession.isPaused || activeSession.endDate > .now
+//        }
         completedIDs.forEach { id in
             guard let session = sessions.first(where: { $0.id == id }) else { return }
             updateStatus(.finished, for: session)

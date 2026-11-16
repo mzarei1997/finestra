@@ -71,7 +71,7 @@ struct FocusView: View {
                                         viewModel.togglePause(session)
                                     }
                                     .buttonStyle(.bordered)
-                                    Button("Stop") {
+                                    Button("Finish") {
                                         viewModel.stop(session)
                                     }
                                     .buttonStyle(.bordered)
@@ -96,7 +96,7 @@ struct FocusView: View {
                 Text("Nearby sessions")
                     .font(.title2.bold())
                 ForEach(viewModel.nearbySessions, id: \.id) { session in
-                    sessionRow(session, showsStartButton: true)
+                    sessionRow(session, showsButtons: true)
                 }
             }
             .padding()
@@ -111,7 +111,7 @@ struct FocusView: View {
                 Text("Today's sessions")
                     .font(.title2.bold())
                 ForEach(viewModel.todaysSessions, id: \.id) { session in
-                    sessionRow(session, showsStartButton: false)
+                    sessionRow(session, showsButtons: false)
                 }
             }
             .padding()
@@ -132,7 +132,7 @@ struct FocusView: View {
                     .foregroundStyle(.secondary)
             } else {
                 ForEach(sessions, id: \.id) { session in
-                    sessionRow(session, showsStartButton: false)
+                    sessionRow(session, showsButtons: false)
                 }
             }
         }
@@ -142,7 +142,7 @@ struct FocusView: View {
 
     private func sessionRow(
         _ session: SessionModel,
-        showsStartButton: Bool
+        showsButtons: Bool
     ) -> some View {
         HStack {
             VStack(alignment: .leading, spacing: 4) {
@@ -165,12 +165,16 @@ struct FocusView: View {
                     .foregroundStyle(session.status.color)
             }
             Spacer()
-            if showsStartButton {
-                Button("Start") {
-                    viewModel.start(session)
+            if showsButtons {
+                HStack {
+                    Button("Start") {
+                        viewModel.start(session)
+                    }
+                    .buttonStyle(.borderedProminent)
+                    .disabled(viewModel.activeSessions.contains { $0.id == session.id })
                 }
-                .buttonStyle(.borderedProminent)
-                .disabled(viewModel.activeSessions.contains { $0.id == session.id })
+                
+                
             }
             Button("", systemImage: "xmark") {
                 viewModel.dropSession(session: session)
